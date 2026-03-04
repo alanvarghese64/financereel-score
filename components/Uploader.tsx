@@ -61,7 +61,25 @@ const audioBlob = new Blob([dataArray.buffer], { type: 'audio/mp3' })
       const url = URL.createObjectURL(audioBlob)
       setAudioUrl(url)
 
-      // (In the next phase, we will send this Blob to the AI API here)
+            // Create FormData to send to our API
+      const formData = new FormData()
+      formData.append('audio', audioBlob, 'hook.mp3')
+
+      // Call our Next.js API route
+      const response = await fetch('/api/score', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to score video')
+      }
+
+      const scoreData = await response.json()
+      
+      // For now, we will just log it to the console! 
+      // Next, we will use D3.js to visualize this data.
+      console.log("THE AI SCORE:", scoreData)
 
     } catch (error) {
       console.error('Error processing video:', error)
